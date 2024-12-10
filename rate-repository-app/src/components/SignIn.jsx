@@ -2,6 +2,8 @@ import { Button, TextInput, View, StyleSheet } from "react-native";
 import Text from "./Text";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import useSignIn from "../hooks/useSignIn";
+import { useNavigate } from "react-router-native";
 
 const styles = StyleSheet.create({
   input: {
@@ -27,10 +29,10 @@ const styles = StyleSheet.create({
 });
 
 const validationSchema = yup.object().shape({
-  userName: yup
+  username: yup
     .string()
-    .min(5, "User name must be at least 5 characters long")
-    .required("User name is required"),
+    .min(5, "Username must be at least 5 characters long")
+    .required("Username is required"),
   password: yup
     .string()
     .min(5, "Pasword must be at least 5 characters long")
@@ -38,7 +40,7 @@ const validationSchema = yup.object().shape({
 });
 
 const initialValues = {
-  userName: "",
+  username: "",
   password: "",
 };
 
@@ -56,14 +58,14 @@ const SignInForm = ({ onSubmit }) => {
       </Text>
       <View>
         <TextInput
-          style={formik.errors.userName ? styles.errorBorder : styles.input}
-          placeholder="User name"
-          value={formik.values.userName}
-          onChangeText={formik.handleChange("userName")}
+          style={formik.errors.username ? styles.errorBorder : styles.input}
+          placeholder="Username"
+          value={formik.values.username}
+          onChangeText={formik.handleChange("username")}
         />
-        {formik.touched.userName && formik.errors.userName && (
+        {formik.touched.username && formik.errors.username && (
           <Text marginLeft="error" color="error">
-            {formik.errors.userName}
+            {formik.errors.username}
           </Text>
         )}
       </View>
@@ -89,8 +91,19 @@ const SignInForm = ({ onSubmit }) => {
 };
 
 const SignIn = () => {
-  const onSubmit = (values) => {
-    console.log(values);
+  const navigate = useNavigate();
+  const [signIn] = useSignIn();
+
+  const onSubmit = async (values) => {
+    const { username, password } = values;
+
+    try {
+      const { data } = await signIn({ username, password });
+      console.log(data);
+      navigate("/", { replace: true });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return <SignInForm onSubmit={onSubmit} />;
