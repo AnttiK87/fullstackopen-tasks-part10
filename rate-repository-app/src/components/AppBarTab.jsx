@@ -1,3 +1,4 @@
+//Component for rendering app bar tab and fuctionality for log out
 import { Pressable, StyleSheet } from "react-native";
 import { Link } from "react-router-native";
 import useAuthStorage from "../hooks/useAuthStorage";

@@ -1,3 +1,4 @@
+//component for showing and styling texts in the application
 import { Text as NativeText, StyleSheet } from "react-native";
 
 import theme from "../theme";

@@ -1,3 +1,4 @@
+//functionalites for handling authorisation token
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class AuthStorage {

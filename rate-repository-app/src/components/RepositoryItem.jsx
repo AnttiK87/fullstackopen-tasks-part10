@@ -1,7 +1,11 @@
-import { View, StyleSheet, Image } from "react-native";
+//component of showing repository information at repository list
+import { View, StyleSheet, Image, Pressable } from "react-native";
 import theme from "../theme";
 import Text from "./Text";
+import { useNavigate } from "react-router-native";
+import * as Linking from "expo-linking";
 
+//styles
 const styles = StyleSheet.create({
   containerInfo: {
     padding: 20,
@@ -47,8 +51,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingBottom: 20,
   },
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 75,
+    width: "100%",
+    borderRadius: 5,
+    backgroundColor: theme.colors.primary,
+  },
 });
 
+//formatting stats over 1000 to form e.g 1.0k
 const statsFormatting = (stats) => {
   if (stats > 1000) {
     return (stats / 1000).toFixed(1) + "k";
@@ -57,54 +70,77 @@ const statsFormatting = (stats) => {
   }
 };
 
-const RepositoryItem = ({ item }) => {
+//stucture of repository item
+const RepositoryItem = ({ item, repositoryInfo }) => {
+  const navigate = useNavigate();
+
+  const showRepository = (id) => {
+    navigate(`/repositoryInfo/${id}`);
+  };
+
+  //console.log(`item lookslike this: ${JSON.stringify(item)}`);
+
   return (
-    <View style={styles.listItem}>
-      <View style={styles.containerInfo}>
-        <Image
-          style={styles.tinyLogo}
-          source={{
-            uri: `${item.ownerAvatarUrl}`,
-          }}
-        />
-        <View style={styles.info}>
-          <Text fontSize="subheading" fontWeight="bold">
-            {item.fullName}
-          </Text>
-          <Text color="secondary">{item.description}</Text>
-          <View style={styles.languageView}>
-            <Text color="textWhite">{item.language}</Text>
+    <Pressable style={styles.container} onPress={() => showRepository(item.id)}>
+      <View testID="repositoryItem" style={styles.listItem}>
+        <View style={styles.containerInfo}>
+          <Image
+            style={styles.tinyLogo}
+            source={{
+              uri: `${item.ownerAvatarUrl}`,
+            }}
+          />
+          <View style={styles.info}>
+            <Text fontSize="subheading" fontWeight="bold">
+              {item.fullName}
+            </Text>
+            <Text color="textSecondary">{item.description}</Text>
+            <View style={styles.languageView}>
+              <Text color="textWhite">{item.language}</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <View style={styles.containerStats}>
-        <View style={styles.statItem}>
-          <Text fontSize="subheading" fontWeight="bold">
-            {statsFormatting(item.stargazersCount)}
-          </Text>
-          <Text color="secondary">Stars</Text>
+        <View style={styles.containerStats}>
+          <View style={styles.statItem}>
+            <Text fontSize="subheading" fontWeight="bold">
+              {statsFormatting(item.stargazersCount)}
+            </Text>
+            <Text color="secondary">Stars</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text fontSize="subheading" fontWeight="bold">
+              {statsFormatting(item.forksCount)}
+            </Text>
+            <Text color="secondary">Forks</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text fontSize="subheading" fontWeight="bold">
+              {statsFormatting(item.reviewCount)}
+            </Text>
+            <Text color="secondary">Reviews</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text fontSize="subheading" fontWeight="bold">
+              {item.ratingAverage}
+            </Text>
+            <Text color="secondary">Rating</Text>
+          </View>
         </View>
-        <View style={styles.statItem}>
-          <Text fontSize="subheading" fontWeight="bold">
-            {statsFormatting(item.forksCount)}
-          </Text>
-          <Text color="secondary">Forks</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text fontSize="subheading" fontWeight="bold">
-            {statsFormatting(item.reviewCount)}
-          </Text>
-          <Text color="secondary">Reviews</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text fontSize="subheading" fontWeight="bold">
-            {item.ratingAverage}
-          </Text>
-          <Text color="secondary">Rating</Text>
-        </View>
+        {repositoryInfo && (
+          <View style={styles.containerInfo}>
+            <Pressable
+              style={styles.button}
+              onPress={() => Linking.openURL(item.url)}
+            >
+              <Text fontSize="subheading" fontWeight="bold" color="textWhite">
+                Open in GitHub
+              </Text>
+            </Pressable>
+          </View>
+        )}
       </View>
-    </View>
+    </Pressable>
   );
 };
 

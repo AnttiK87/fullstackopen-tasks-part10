@@ -1,3 +1,4 @@
+//hook for signing user in and setting authentication token to context
 import { useMutation } from "@apollo/client";
 import { LOGIN } from "../graphql/mutations";
 import useAuthStorage from "../hooks/useAuthStorage";

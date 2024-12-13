@@ -1,10 +1,12 @@
+//component for signing in
 import { Button, TextInput, View, StyleSheet } from "react-native";
 import Text from "./Text";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import useSignIn from "../hooks/useSignIn";
 import { useNavigate } from "react-router-native";
-
+import React, { useState } from "react";
+//styles
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -28,6 +30,7 @@ const styles = StyleSheet.create({
   },
 });
 
+//validating user inputs
 const validationSchema = yup.object().shape({
   username: yup
     .string()
@@ -44,7 +47,8 @@ const initialValues = {
   password: "",
 };
 
-const SignInForm = ({ onSubmit }) => {
+//structure of sign in form
+const SignInForm = ({ onSubmit, error }) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -56,6 +60,16 @@ const SignInForm = ({ onSubmit }) => {
       <Text fontSize="subheading" fontWeight="bold" padding="SignIn">
         Sign in
       </Text>
+      {error && (
+        <Text
+          marginLeft="error"
+          color="error"
+          fontSize="subheading"
+          fontWeight="bold"
+        >
+          {error}
+        </Text>
+      )}
       <View>
         <TextInput
           style={formik.errors.username ? styles.errorBorder : styles.input}
@@ -84,29 +98,33 @@ const SignInForm = ({ onSubmit }) => {
         )}
       </View>
       <View style={styles.button}>
-        <Button title="Sign in" onPress={formik.handleSubmit} />
+        <Button testID="SignIn" title="Sign in" onPress={formik.handleSubmit} />
       </View>
     </View>
   );
 };
 
+//rendering sign in form and fuctionality for it
 const SignIn = () => {
+  //hooks and state variables
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [signIn] = useSignIn();
 
+  //functionality for submitting sign in form
   const onSubmit = async (values) => {
     const { username, password } = values;
 
     try {
-      const { data } = await signIn({ username, password });
-      console.log(data);
+      await signIn({ username, password });
       navigate("/", { replace: true });
     } catch (e) {
       console.log(e);
+      setError(e.message);
     }
   };
 
-  return <SignInForm onSubmit={onSubmit} />;
+  return <SignInForm onSubmit={onSubmit} error={error} />;
 };
 
 export default SignIn;

@@ -1,3 +1,4 @@
+//some styles
 import { Platform } from "react-native";
 
 const theme = {

@@ -1,9 +1,11 @@
+//hook for gettin logged in user data
 import { useQuery } from "@apollo/client";
 
 import { GET_ME } from "../graphql/queries";
 
-const useLoggedInUser = () => {
+const useLoggedInUser = (includeReviews) => {
   const { data, loading, error, refetch } = useQuery(GET_ME, {
+    variables: { includeReviews },
     fetchPolicy: "cache-and-network",
   });
 
